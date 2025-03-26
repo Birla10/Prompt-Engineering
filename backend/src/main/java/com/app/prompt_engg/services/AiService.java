@@ -58,6 +58,7 @@ public class AiService {
 				throw new InvalidScenarioException("Unable to process request, not a valid scenario");
 			}
 
+			logger.info(request.getConstraints().toString());
 			// Log before building the prompt.
 			logger.info("Building prompt for AI API call.");
 			String prompt = buildPrompt(request);

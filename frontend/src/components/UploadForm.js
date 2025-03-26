@@ -3,6 +3,7 @@ import "../index.css";
 import "../css/UploadForm.css";
 
 const UploadForm = () => {
+  const [constraintsInput, setConstraintsInput] = useState('');
   const [constraints, setConstraints] = useState("");
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState("");
@@ -14,6 +15,12 @@ const UploadForm = () => {
 
     setLoading(true);
     setMessage("");
+
+    const parsedConstraints = constraintsInput
+    .split('/')
+    .map(s => s.trim())
+    .filter(Boolean); // remove empty strings
+    setConstraints(parsedConstraints);
    
     // Process the form data and call backend API
     const backendUrl = "http://localhost:8080/analyser";
@@ -60,8 +67,8 @@ const UploadForm = () => {
         <label>Enter constraints along with keywords (Budget: / Deadline: / Number of developers: ):</label>
         <input 
           type="text" 
-          value={constraints}
-          onChange={(e) => setConstraints(e.target.value.split('/').map(s => s.trim()))}        
+          value={constraintsInput}
+          onChange={(e) => setConstraintsInput(e.target.value)}        
           placeholder='Budget: / Deadline: / Number of developers: '
         />
       </div>
