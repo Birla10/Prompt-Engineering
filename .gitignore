@@ -22,3 +22,18 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Project-specific ignores
+
+# Backend files and folders
+/backend/target
+/backend/build
+/backend/logs
+/backend/.env
+/backend/node_modules
+
+# Frontend files and folders
+/frontend/node_modules
+/frontend/dist
+/frontend/build
+/frontend/.env

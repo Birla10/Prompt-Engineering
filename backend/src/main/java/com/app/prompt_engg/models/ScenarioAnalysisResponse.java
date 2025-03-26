@@ -19,6 +19,10 @@ public class ScenarioAnalysisResponse {
 		this.disclaimer = disclaimer;
 	}
     
+	public ScenarioAnalysisResponse() {
+		super();
+	}
+
 	public String getScenarioSummary() {
 		return scenarioSummary;
 	}
