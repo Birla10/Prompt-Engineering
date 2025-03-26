@@ -44,9 +44,7 @@ mvn clean install
 # Run the application
 java -jar target/prompt-engineering-backend.jar
 ```
-Backend starts on http://localhost:8080
-Backend consists of below endpoint
-http://localhost:8080/analyser/analyser
+Backend starts on http://localhost:8080 and consists of endpoint http://localhost:8080/analyser/analyser
 - POST
 - request sample: {
                     "scenario": "Our team has a new client project with a tight deadline and limited budget.",
