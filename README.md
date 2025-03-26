@@ -14,7 +14,6 @@ The application consists of:
 - **Backend**: A Spring Boot application that handles prompt creation and communication with AI services.
 - **Frontend**: A React application that provides a user-friendly interface for input and displaying the analysis.
 
----
 
 ## Tech Stack
 
@@ -22,7 +21,6 @@ The application consists of:
 - **Frontend**: React, HTML, CSS
 - **Build Tools**: Maven, npm
 
----
 
 ## Backend Setup
 
