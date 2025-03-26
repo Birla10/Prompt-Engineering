@@ -4,7 +4,6 @@ import "../css/UploadForm.css";
 
 const UploadForm = () => {
   const [constraintsInput, setConstraintsInput] = useState('');
-  const [constraints, setConstraints] = useState("");
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState("");
   const [scenario, setScenario] = useState("");
@@ -20,7 +19,6 @@ const UploadForm = () => {
     .split('/')
     .map(s => s.trim())
     .filter(Boolean); // remove empty strings
-    setConstraints(parsedConstraints);
    
     // Process the form data and call backend API
     const backendUrl = "http://localhost:8080/analyser";
@@ -37,7 +35,7 @@ const UploadForm = () => {
         },
         body: JSON.stringify({
           "scenario": scenario,
-          "constraints": constraints
+          "constraints": parsedConstraints
         })
       });
       // Handle the response as needed
@@ -72,7 +70,7 @@ const UploadForm = () => {
           placeholder='Budget: / Deadline: / Number of developers: '
         />
       </div>
-      <button type="submit" className="submit-button" disabled={loading}>
+      <button type="submit" className="submit-button" disabled={loading || !scenario.trim() || !constraintsInput.trim()}>
         Submit
       </button>
       {loading && <p className="loading-text">Generating response...</p>}

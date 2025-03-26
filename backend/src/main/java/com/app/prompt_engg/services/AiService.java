@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -33,12 +34,13 @@ import com.openai.models.responses.ResponseOutputItem;
 public class AiService {
 
     private static final Logger logger = LoggerFactory.getLogger(AiService.class);
-
-	@Value("${spring.ai.openai.api-key}")
-	private String apiKey;
 	
 	@Value("${openai.prompt}")
 	private String prompt;
+	
+	@Autowired
+	private OpenAIClient client;
+	
 	
 	/**
 	 * Generates an analysis based on the given scenario and constraints.
@@ -99,7 +101,8 @@ public class AiService {
 		
 		JsonObject jsonObject = JsonParser.parseString(trimmed).getAsJsonObject();
 		
-		String summary = jsonObject.get("summary").getAsString();
+		String summary = getFlexibleKey(jsonObject, "summary", "short_summary", "short");
+		
 	    String disclaimer = jsonObject.get("disclaimer").getAsString();
 
 	    // Extract lists from JSON arrays
@@ -112,7 +115,17 @@ public class AiService {
 		return new ScenarioAnalysisResponse(summary, pitfalls, strategies, resources, disclaimer);
 		
 	}
+	
+	public static String getFlexibleKey(JsonObject json, String... possibleKeys) {
+        for (String key : possibleKeys) {
+            if (json.has(key)) {
+                return json.get(key).getAsString();
+            }
+        }
+        return null; // or some fallback string
+    }
 
+	
 	/**
 	 * Converts a JsonArray into a List of Strings.
 	 *
@@ -151,7 +164,6 @@ public class AiService {
 	protected String callApi(String prompt) {
 		// Log before initializing the API client.
 		logger.info("Initializing OpenAI client.");
-		OpenAIClient client = OpenAIOkHttpClient.builder().apiKey(apiKey).build();
 
 		ResponseCreateParams params = ResponseCreateParams.builder().input(prompt).model(ChatModel.GPT_4O).build();
 		// Log the API call initiation.
