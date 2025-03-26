@@ -29,8 +29,8 @@ The application consists of:
 - Maven
 - OpenAI API Key
 
-Place the API Key in the backend/src/main/resources/application.properties file.
-You can also find the prompt in backend/src/main/resources/application.properties file. When editing make sure you place `[scenarios]` and `[constraints]` for scenarios and constraints tpo place them dynamically
+** Place the API Key in the backend/src/main/resources/application.properties file.**
+**You can also find the prompt in backend/src/main/resources/application.properties file. When editing make sure you place `[scenarios]` and `[constraints]` for scenarios and constraints tpo place them dynamically**
 
 ### Steps to Run
 
