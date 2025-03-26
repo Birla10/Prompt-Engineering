@@ -57,11 +57,11 @@ const UploadForm = () => {
         <input type="text" onChange={(e) => setScenario(e.target.value)} />
       </div>
       <div className="form-group">
-        <label>Enter constraints along with keywords (Budget: / Deadline: / Number of developers: ;):</label>
+        <label>Enter constraints along with keywords (Budget: / Deadline: / Number of developers: ):</label>
         <input 
           type="text" 
           value={constraints}
-          onChange={(e) => setConstraints(e.target.value.split('&').map(s => s.trim()))}        
+          onChange={(e) => setConstraints(e.target.value.split('/').map(s => s.trim()))}        
           placeholder='Budget: / Deadline: / Number of developers: '
         />
       </div>

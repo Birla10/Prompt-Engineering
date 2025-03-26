@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +25,6 @@ import com.openai.models.ChatModel;
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
 import com.openai.models.responses.ResponseOutputItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Service class for handling AI-based scenario analysis.
@@ -39,7 +39,10 @@ public class AiService {
 	
 	@Value("${spring.ai.openai.model}")
 	private String apiModel;
-
+	
+	@Value("${openai.prompt}")
+	private String prompt;
+	
 	/**
 	 * Generates an analysis based on the given scenario and constraints.
 	 *
@@ -59,16 +62,16 @@ public class AiService {
 			}
 
 			// Log before building the prompt.
-			logger.debug("Building prompt for AI API call.");
+			logger.info("Building prompt for AI API call.");
 			String prompt = buildPrompt(request);
 
 			// Log before calling the API.
-			logger.debug("Calling AI API with built prompt.");
+			logger.info("Calling AI API with built prompt.");
 			String apiResponse = callApi(prompt);
 			
 			// Log the raw API response.
 			logger.info("Received API response.");
-			logger.debug("API response: {}", apiResponse);
+			logger.info("API response: {}", apiResponse);
 			result = parseApiResponse(apiResponse);
 
 		} catch (Exception e) {
@@ -90,7 +93,7 @@ public class AiService {
 	 */
 	private ScenarioAnalysisResponse parseApiResponse(String apiResponse) throws JsonMappingException, JsonProcessingException {
 		// Log the start of parsing.
-		logger.debug("Parsing API response.");
+		logger.info("Parsing API response.");
 		
 		int start = apiResponse.indexOf('{');
 		int end = apiResponse.lastIndexOf('}') + 1;
@@ -107,7 +110,7 @@ public class AiService {
 	    List<String> resources = toStringList(jsonObject.getAsJsonArray("recommended_resources"));
 		
 		// Log successful parse.
-		logger.debug("API response parsed successfully.");
+		logger.info("API response parsed successfully.");
 		return new ScenarioAnalysisResponse(summary, pitfalls, strategies, resources, disclaimer);
 		
 	}
@@ -133,19 +136,12 @@ public class AiService {
 	 * @return a formatted prompt string to be sent to the AI API
 	 */
 	private String buildPrompt(ScenarioAnalysisRequest request) {
-		// Construct a detailed prompt for structured output
-		String prompt = "Given the following scenario and constraints, generate:\n" + 
-		       "1. A brief summary of the scenario\n" +
-		       "2. List of pitfalls_or_risks\n" + 
-		       "3. List of proposed_strategies\n" + 
-		       "4. List of recommended_resources\n" +
-		       "5. Short disclaimer\n\n" + 
-		       "Scenario: " + request.getScenario() + "\n" + 
-		       "Constraints: " + String.join(", ", request.getConstraints()) +
-		       " Provide the response in a json format with the mentioned keys";
-		// Log the constructed prompt in debug level.
-		logger.debug("Constructed prompt: {}", prompt);
-		return prompt;
+		
+		String final_prompt = prompt.replace("[scenarios]", request.getScenario())
+				.replace("[constraints]", String.join(", ", request.getConstraints()));
+		// Log the constructed prompt in info level.
+		logger.info("Constructed prompt: {}", prompt);
+		return final_prompt;
 	}
 
 	/**
@@ -156,12 +152,12 @@ public class AiService {
 	 */
 	protected String callApi(String prompt) {
 		// Log before initializing the API client.
-		logger.debug("Initializing OpenAI client.");
+		logger.info("Initializing OpenAI client.");
 		OpenAIClient client = OpenAIOkHttpClient.builder().apiKey(apiKey).build();
 
-		ResponseCreateParams params = ResponseCreateParams.builder().input(prompt).model(apiModel).build();
+		ResponseCreateParams params = ResponseCreateParams.builder().input(prompt).model(ChatModel.GPT_4O).build();
 		// Log the API call initiation.
-		logger.debug("Sending request to AI API.");
+		logger.info("Sending request to AI API.");
 		Response response = client.responses().create(params);
 
 		JsonField<List<ResponseOutputItem>> items = response._output();
@@ -171,7 +167,7 @@ public class AiService {
 		JsonField<String> item = output.get().get(0).message().get().content().get(0).asOutputText()._text(); 
 		
 		// Log after receiving response content.
-		logger.debug("AI API call completed.");
+		logger.info("AI API call completed.");
 		return item.toString();
 	}
 }
