@@ -37,9 +37,6 @@ public class AiService {
 	@Value("${spring.ai.openai.api-key}")
 	private String apiKey;
 	
-	@Value("${spring.ai.openai.model}")
-	private String apiModel;
-	
 	@Value("${openai.prompt}")
 	private String prompt;
 	
